@@ -15,4 +15,6 @@ config :phoenix, :code_reloader,
 config :logger, :console,
   level: :debug
 
-
+config :alcsmg, :db,
+  user: :alcsmg,
+  pwd: "pwd"

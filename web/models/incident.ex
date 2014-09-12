@@ -19,13 +19,13 @@ defmodule Alcsmg.Incident do
   Record.defrecord :incident, Record.extract(:incident, from_lib: "alcs/include/alcs.hrl")
 
   def from_record(inc) do
-    Enum.reduce incident(inc), %Incident{}, fn
+    Enum.reduce incident(inc), %Alcsmg.Incident{}, fn
       {:location, {line}}, acc ->
         %{acc | line_no: line, column_no: 0}
       {:location, {line, column}}, acc ->
         %{acc | line_no: line, column_no: column}
       {field, value}, acc ->
-        %{acc | field => value}
+        Map.put acc, field, value
     end
   end
 end

@@ -16,14 +16,11 @@ defmodule Alcsmg.Inspection do
 
   def check(repo, revision) do
     Util.clone repo.url, fn dir ->
-      revision = unless revision do
-        Util.get_revision dir
-      end
-      # add checkout
+      revision = get_revision dir, revision
       incidents = Checker.check dir
-      %Inspection{revision: revision,
-                  repo_id: repo.id,
-                  incidents: incidents}
+      %Alcsmg.Inspection{revision: revision,
+                         repo_id: repo.id,
+                         incidents: incidents}
     end
   end
 
@@ -39,6 +36,15 @@ defmodule Alcsmg.Inspection do
         Repo.insert %{incident | inspection_id: obj.id}
       end
       %{obj | incidents: incidents}
+    end
+  end
+
+  defp get_revision(dir, revision) do
+    cond do
+      revision ->
+        Util.checkout dir, revision
+      true ->
+        Util.get_revision dir
     end
   end
 end

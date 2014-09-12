@@ -13,8 +13,7 @@ config :phoenix, Alcsmg.Router,
   session_key: "_alcsmg_key",
   session_secret: "YK1XWC_&=QY%&)78D397ZQ%5+HJ7)0U8&N4_UG99^OR&@1OCIM)@YWS2!LM+NT9K*N",
   catch_errors: true,
-  debug_errors: false,
-  error_controller: Alcsmg.PageController
+  debug_errors: false
 
 config :phoenix, :code_reloader,
   enabled: false
@@ -22,6 +21,10 @@ config :phoenix, :code_reloader,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :alcsmg, :db,
+  user: "postgres",
+  pwd: "pwd"
 
 # Import environment specific config. Note, this must remain at the bottom of
 # this file to properly merge your previous config entries.
