@@ -24,6 +24,7 @@ defmodule Alcsmg.Util do
 
   def checkout(dir, revision) do
     run! "git", ["--git-dir=#{git_dir dir}",
+                 "--work-tree=#{dir}",
                  "checkout", revision]
   end
 

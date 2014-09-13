@@ -19,7 +19,6 @@ defmodule Alcsmg.UtilTest do
     url = "git@github.com:velimir0xff/cache.git"
     Util.clone url, fn dir ->
       rev_head = Util.get_revision dir
-      IO.puts "rev_head: #{rev_head}"
       Util.checkout dir, "HEAD^"
       rev_parent = Util.get_revision dir
       refute rev_head == rev_parent
