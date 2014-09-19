@@ -28,7 +28,10 @@ defmodule Alcsmg.Mixfile do
       {:cowboy,   "~> 1.0.0"},
       {:postgrex, "~> 0.5"},
       {:ecto,     "~> 0.2.0"},
-      {:alcs, git: "git@bitbucket.org:velimir/alcs.git"}
+      {:alcs, git: "git@bitbucket.org:velimir/alcs.git"},
+      # test dependencies
+      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.0", only: :test},
+      {:httpotion, "~> 0.2.4", only: :test}
     ]
   end
 end

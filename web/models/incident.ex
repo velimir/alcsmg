@@ -4,28 +4,38 @@ defmodule Alcsmg.Incident do
   use Ecto.Model
 
   schema "incidents" do
-    field :inspection_id, :integer
     field :error_type,    :string
     field :path,          :string
     field :line_no,       :integer
-    field :column_no,     :integer
+    field :column_no,     :integer, default: 0
     # TODO: add message
     # field :message,       :string
     field :msg_id,        :integer
 
-    belongs_to :inspections, Alcsmg.Inspection
+    belongs_to :inspection, Alcsmg.Inspection
   end
 
   Record.defrecord :incident, Record.extract(:incident, from_lib: "alcs/include/alcs.hrl")
 
+  defp mapping, do: [
+    file_name: :path,
+    msg_id:    :msg_id,
+    location:  fn
+      {line, column} ->             %{line_no: line, column_no: column}
+      line when is_integer(line) -> %{line_no: line, column_no: 0}
+    end,
+    type:      fn type -> %{error_type: to_string type} end,
+  ]
+
   def from_record(inc) do
     Enum.reduce incident(inc), %Alcsmg.Incident{}, fn
-      {:location, {line}}, acc ->
-        %{acc | line_no: line, column_no: 0}
-      {:location, {line, column}}, acc ->
-        %{acc | line_no: line, column_no: column}
       {field, value}, acc ->
-        Map.put acc, field, value
+        case mapping[field] do
+          dst when is_atom(dst) ->
+            Map.put acc, dst, value
+          fun when is_function (fun) ->
+            Map.merge acc, fun.(value)
+        end
     end
   end
 end

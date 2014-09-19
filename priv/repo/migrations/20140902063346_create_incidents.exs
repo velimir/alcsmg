@@ -7,7 +7,6 @@ defmodule Repo.Migrations.CreateIncidents do
         id            serial PRIMARY KEY,
         inspection_id integer REFERENCES inspections (id),
         message       text,
-        error_no      integer,
         error_type    text, 
         path          text,
         line_no       integer,

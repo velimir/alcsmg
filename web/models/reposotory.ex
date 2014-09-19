@@ -8,8 +8,9 @@ defmodule Alcsmg.Repository do
   end
 
   def find_by_url(url) do
-    q = from r in Alcsmg.Repository, where: r.url == ^url
-    Repo.get(q)
+    (from r in Alcsmg.Repository, where: r.url == ^url)
+    |> Repo.all
+    |> List.first
   end
 
   def find_or_create(url) do

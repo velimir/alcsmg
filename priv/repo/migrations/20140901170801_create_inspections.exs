@@ -4,9 +4,9 @@ defmodule Repo.Migrations.CreateInspections do
   def up do
     """
       CREATE TABLE inspections(
-        id        serial PRIMARY KEY,
-        repo_id   integer REFERENCES repos (id),
-        revision  text
+        id              serial PRIMARY KEY,
+        repository_id   integer REFERENCES repositories (id),
+        revision        text
       )
     """
   end

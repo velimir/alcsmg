@@ -1,9 +1,11 @@
 defmodule Alcsmg.Checker do
+  require Logger
   alias Alcsmg.Incident
 
   def check(dir) do
     erl_files(dir)
     |> Enum.map(&check_file/1)
+    |> List.flatten
     |> Enum.map(&Incident.from_record/1)
     |> fix_path(dir)
   end
@@ -15,10 +17,13 @@ defmodule Alcsmg.Checker do
 
   def check_file(file) do
     # TODO: read settings from repository .alcs file
-    :alcs.run file, rules: :all
+    # TODO: filter :ok statuses on alcs side
+    Logger.debug "running check on file: #{file}"
+    :alcs.run(to_char_list(file), rules: :all)
+    |> Enum.filter(&(&1 != :ok))
   end
 
   def fix_path(incidents, dir) do
-    Enum.map incidents, &(Path.relative_to &1.path, dir)
+    Enum.map incidents, &(%{&1 | path: Path.relative_to(&1.path, dir)})
   end
 end

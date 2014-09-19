@@ -1,15 +1,15 @@
 defmodule Repo do
-  use Ecto.Repo, adapter: Ecto.Adapters.Postgres, env: Mix.env
+  use Ecto.Repo, adapter: Ecto.Adapters.Postgres
 
-  def conf(env), do: parse_url url(env)
+  def conf, do: parse_url url
 
   def priv do
     app_dir(:alcsmg, "priv/repo")
   end
 
-  defp url(env) do
+  defp url do
     conf = Application.get_env :alcsmg, :db
-    uri = "ecto://#{cred conf}@#{conf[:address]}/#{conf[:db_name]}"
+    uri = "ecto://#{cred conf}@#{conf[:address]}/#{conf[:name]}"
     args = conf[:args]
     cond do
       args -> uri <> "?" <> URI.encode_query(args)

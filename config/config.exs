@@ -24,7 +24,9 @@ config :logger, :console,
 
 config :alcsmg, :db,
   user: "postgres",
-  pwd: "pwd"
+  pwd: "pwd",
+  address: "localhost",
+  name: "alcsmg"
 
 # Import environment specific config. Note, this must remain at the bottom of
 # this file to properly merge your previous config entries.

@@ -13,11 +13,15 @@ defmodule Alcsmg.InspectionController do
     end
   end
 
-  def create(conn, %{"url" => url} = params) do
-    resp = Repository.find_or_create(url)
-    |> Inspection.check params["revision"]
-    |> Inspection.insert_with_assoc
+  def create(conn, %{}) do
+    {:ok, body, conn} = read_body(conn)
+    params = JSON.decode! body
+
+    resp = Repository.find_or_create(params["url"])
+    |> Inspection.check(params["revision"])
+    |> Inspection.insert_with_incidents
     |> JSON.encode!
+
     json conn, :created, resp
   end
 end

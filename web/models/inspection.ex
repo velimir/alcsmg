@@ -1,13 +1,10 @@
 defmodule Alcsmg.Inspection do
   use Ecto.Model
 
-  import Ecto.Query, only: [from: 2]
-
-  alias Alcsmg.Util
   alias Alcsmg.Checker
+  alias Alcsmg.Util
 
   schema "inspections" do
-    field :repo_id,  :integer
     field :revision, :string
 
     belongs_to :repository, Alcsmg.Repository
@@ -18,9 +15,8 @@ defmodule Alcsmg.Inspection do
     Util.clone repo.url, fn dir ->
       revision = get_revision dir, revision
       incidents = Checker.check dir
-      %Alcsmg.Inspection{revision: revision,
-                         repo_id: repo.id,
-                         incidents: incidents}
+      {%Alcsmg.Inspection{revision: revision, repository_id: repo.id},
+       incidents}
     end
   end
 
@@ -29,14 +25,15 @@ defmodule Alcsmg.Inspection do
              preload: [:incidents])
   end
 
-  def insert_with_assoc(obj) do
-    Repo.transaction fn ->
-      obj = Repo.insert obj
-      incidents = for incident <- obj.incidents do
+  def insert_with_incidents({inspection, incidents}) do
+    {:ok, result} = Repo.transaction fn ->
+      obj = Repo.insert inspection
+      incidents = for incident <- incidents do
         Repo.insert %{incident | inspection_id: obj.id}
       end
-      %{obj | incidents: incidents}
+      Ecto.Associations.load obj, :incidents, incidents
     end
+    result
   end
 
   defp get_revision(dir, revision) do
