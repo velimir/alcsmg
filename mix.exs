@@ -24,13 +24,13 @@ defmodule Alcsmg.Mixfile do
   # { :barbat, "~> 0.1", github: "elixir-lang/barbat" }
   defp deps do
     [
-      {:phoenix,  "0.4.0"},
+      {:phoenix,  "0.5.0"},
       {:cowboy,   "~> 1.0.0"},
-      {:postgrex, "~> 0.5"},
-      {:ecto,     "~> 0.2.0"},
+      {:postgrex, "~> 0.6"},
+      {:ecto,     "~> 0.2"},
       {:alcs, git: "git@bitbucket.org:velimir/alcs.git"},
       # test dependencies
-      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.0", only: :test},
+      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1", only: :test},
       {:httpotion, "~> 0.2.4", only: :test}
     ]
   end
