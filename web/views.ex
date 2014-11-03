@@ -8,6 +8,7 @@ defmodule Alcsmg.Views do
       # This block is expanded within all views for aliases, imports, etc
       import Alcsmg.I18n
       import Alcsmg.Router.Helpers
+      alias Phoenix.Controller.Flash
     end
   end
 

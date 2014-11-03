@@ -4,7 +4,7 @@ defmodule AlcsmgTest do
 
   def base_url do
     env = Application.get_env :phoenix, Alcsmg.Router
-    "http://localhost:#{env[:port]}"
+    "http://localhost:#{env[:http][:port]}"
   end
 
   setup_all do
@@ -16,9 +16,9 @@ defmodule AlcsmgTest do
 
   test "check without specified revision" do
     headers = [Accept: "application/json",
-               "Content-Tyte": "application/json"]
+               "Content-Type": "application/json"]
     body = JSON.encode! %{url: "git@github.com:velimir0xff/cache.git"}
-    resp = HTTPotion.post "#{base_url}/inspections", body, headers
+    resp = HTTPotion.post "#{base_url}/api/alcs/v1/inspections", body, headers
     assert resp.status_code == 201
     assert resp.body == ""
   end

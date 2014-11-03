@@ -1,7 +1,11 @@
 defmodule Alcsmg.InspectionController do
+  alias Poison, as: JSON
+  require Logger
   use Phoenix.Controller
   alias Alcsmg.Inspection
   alias Alcsmg.Repository
+
+  plug :action
 
   def show(conn, %{"id" => id}) do
     case Inspection.find(id) do
@@ -14,11 +18,8 @@ defmodule Alcsmg.InspectionController do
   end
 
   def create(conn, %{}) do
-    {:ok, body, conn} = read_body(conn)
-    params = JSON.decode! body
-
-    resp = Repository.find_or_create(params["url"])
-    |> Inspection.check(params["revision"])
+    resp = Repository.find_or_create(conn.params["url"])
+    |> Inspection.check(conn.params["revision"])
     |> Inspection.insert_with_incidents
     |> JSON.encode!
 

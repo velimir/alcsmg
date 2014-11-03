@@ -1,8 +1,9 @@
 defmodule Alcsmg.Router do
   use Phoenix.Router
 
-  scope alias: Alcsmg do
-    get "/", WelcomeController, :index, as: :root
+  scope path: "/api/alcs/v1", alias: Alcsmg do
+    pipe_through :api
+
     resources "/inspections", InspectionController, only: [:show, :create]
   end
 end
