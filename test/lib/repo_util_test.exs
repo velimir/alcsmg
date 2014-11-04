@@ -5,7 +5,7 @@ defmodule Alcsmg.UtilTest do
   test "Util.clone function" do
     {:ok, agent} = Agent.start_link fn -> [] end
 
-    url = "git@github.com:velimir0xff/cache.git"
+    url = "git@github.com:velimir0xff/alcsmg-test.git"
     Util.clone url, fn dir ->
       assert File.exists? dir
       Agent.update agent, fn _ -> dir end
@@ -16,7 +16,7 @@ defmodule Alcsmg.UtilTest do
   end
 
   test "checkout change revision" do
-    url = "git@github.com:velimir0xff/cache.git"
+    url = "git@github.com:velimir0xff/alcsmg-test.git"
     Util.clone url, fn dir ->
       rev_head = Util.get_revision dir
       Util.checkout dir, "HEAD^"

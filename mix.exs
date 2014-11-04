@@ -29,6 +29,7 @@ defmodule Alcsmg.Mixfile do
       {:cowboy,   "~> 1.0.0"},
       {:postgrex, "~> 0.6"},
       {:ecto,     "~> 0.2"},
+      {:inflex,   "~> 0.2.9"},
       {:alcs, git: "git@bitbucket.org:velimir/alcs.git"},
       # test dependencies
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1", only: :test},

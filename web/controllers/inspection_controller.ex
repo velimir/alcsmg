@@ -2,7 +2,6 @@ defmodule Alcsmg.InspectionController do
   alias Poison, as: JSON
   use Phoenix.Controller
   alias Alcsmg.Inspection
-  alias Alcsmg.Repository
 
   plug :action
 
@@ -17,10 +16,8 @@ defmodule Alcsmg.InspectionController do
   end
 
   def create(conn, %{}) do
-    resp = Repository.find_or_create(conn.params["url"])
-    |> Inspection.check(conn.params["revision"])
-    |> Inspection.insert_with_incidents
-    |> JSON.encode!
+    resp = Inspection.check(conn.params["url"], conn.params["revision"])
+    |> Inspection.to_json
 
     json conn, :created, resp
   end

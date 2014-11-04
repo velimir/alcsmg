@@ -3,6 +3,8 @@ defmodule Alcsmg.Inspection do
 
   alias Alcsmg.Checker
   alias Alcsmg.Util
+  alias Alcsmg.Repository
+  alias Poison, as: JSON
 
   schema "inspections" do
     field :revision, :string
@@ -11,7 +13,17 @@ defmodule Alcsmg.Inspection do
     has_many :incidents, Alcsmg.Incident
   end
 
-  def check(repo, revision) do
+  def to_json(inspection) do
+    JSON.encode! inspection
+  end
+
+  def check(url, revision) do
+    Repository.find_or_create(url)
+    |> process(revision)
+    |> insert_with_incidents
+  end
+
+  def process(repo, revision) do
     Util.clone repo.url, fn dir ->
       revision = get_revision dir, revision
       incidents = Checker.check dir

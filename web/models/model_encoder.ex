@@ -1,8 +1,8 @@
 defimpl Poison.Encoder, for: Any do
   def encode(model, options) do
     module = model.__struct__
-    key = module.__schema__(:source)
-
+    key = module.__schema__(:source) |> Inflex.singularize
+    
     model
     |> to_map
     |> (&(Dict.put %{}, key, &1)).()
