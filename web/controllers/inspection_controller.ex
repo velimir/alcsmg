@@ -1,6 +1,5 @@
 defmodule Alcsmg.InspectionController do
   alias Poison, as: JSON
-  require Logger
   use Phoenix.Controller
   alias Alcsmg.Inspection
   alias Alcsmg.Repository

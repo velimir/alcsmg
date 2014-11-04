@@ -1,11 +1,7 @@
 defmodule AlcsmgTest do
   use ExUnit.Case
+  alias Alcsmg.Router.Helpers
   alias Poison, as: JSON
-
-  def base_url do
-    env = Application.get_env :phoenix, Alcsmg.Router
-    "http://localhost:#{env[:http][:port]}"
-  end
 
   setup_all do
     Application.ensure_all_started :alcsmg
@@ -17,8 +13,9 @@ defmodule AlcsmgTest do
   test "check without specified revision" do
     headers = [Accept: "application/json",
                "Content-Type": "application/json"]
-    body = JSON.encode! %{url: "git@github.com:velimir0xff/cache.git"}
-    resp = HTTPotion.post "#{base_url}/api/alcs/v1/inspections", body, headers
+    body = JSON.encode! %{url: "git@github.com:velimir0xff/alcsmg-test.git"}
+    url = Helpers.url Helpers.api_v1_inspection_path :create
+    resp = HTTPotion.post url, body, headers
     assert resp.status_code == 201
     assert resp.body == ""
   end
