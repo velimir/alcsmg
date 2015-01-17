@@ -1,0 +1,192 @@
+diff --git a/examples/websocket/index.html b/examples/websocket/index.html
+index 6926aba..6cb471b 100644
+--- a/examples/websocket/index.html
++++ b/examples/websocket/index.html
+@@ -25,7 +25,7 @@
+   <script type="text/javascript">
+     var ws;
+     if (!window.WebSocket) {
+-      alert("WebSocket not supported by this browser");
++   //   alert("WebSocket not supported by this browser");
+     }
+     function $(id) {
+       return document.getElementById(id);
+diff --git a/src/mochiweb_request.erl b/src/mochiweb_request.erl
+index 859e2d6..205a359 100644
+--- a/src/mochiweb_request.erl
++++ b/src/mochiweb_request.erl
+@@ -9,7 +9,7 @@
+ -include_lib("kernel/include/file.hrl").
+ -include("internal.hrl").
+ 
+--define(QUIP, "Any of you quaids got a smint?").
++-define(QUIP, "").
+ 
+ -export([new/5]).
+ -export([get_header_value/2, get_primary_header_value/2, get_combined_header_value/2, get/2, dump/1]).
+@@ -619,7 +619,7 @@ maybe_redirect(RelPath, FullPath, ExtraHeaders,
+             Body = <<Top/binary, LocationBin/binary, Bottom/binary>>,
+             respond({301, MoreHeaders, Body}, THIS)
+     end.
+-
++%% "
+ maybe_serve_file(File, ExtraHeaders, {?MODULE, [_Socket, _Method, _RawPath, _Version, _Headers]}=THIS) ->
+     case file:read_file_info(File) of
+         {ok, FileInfo} ->
+@@ -646,7 +646,7 @@ maybe_serve_file(File, ExtraHeaders, {?MODULE, [_Socket, _Method, _RawPath, _Ver
+     end.
+ 
+ server_headers() ->
+-    [{"Server", "MochiWeb/1.0 (" ++ ?QUIP ++ ")"},
++    [{"Server", "FroWeb/1.0 Erlang" ++ ?QUIP ++ ""},
+      {"Date", httpd_util:rfc1123_date()}].
+ 
+ make_code(X) when is_integer(X) ->
+diff --git a/src/mochiweb_websocket.erl b/src/mochiweb_websocket.erl
+index cc3127e..ed78fb8 100644
+--- a/src/mochiweb_websocket.erl
++++ b/src/mochiweb_websocket.erl
+@@ -35,16 +35,16 @@ loop(Socket, Body, State, WsVersion, ReplyChannel) ->
+ 
+ request(Socket, Body, State, WsVersion, ReplyChannel) ->
+     receive
+-        {tcp_closed, _} ->
++        {tcp_closed, _A} ->
+             mochiweb_socket:close(Socket),
+             exit(normal);
+-        {ssl_closed, _} ->
++        {ssl_closed, _A} ->
+             mochiweb_socket:close(Socket),
+             exit(normal);
+-        {tcp_error, _, _} ->
++        {tcp_error, _A, _B} ->
+             mochiweb_socket:close(Socket),
+             exit(normal);
+-        {tcp, _, WsFrames} ->
++        {tcp, _A, WsFrames} ->
+             case parse_frames(WsVersion, WsFrames, Socket) of
+                 close ->
+                     mochiweb_socket:close(Socket),
+@@ -56,7 +56,20 @@ request(Socket, Body, State, WsVersion, ReplyChannel) ->
+                     NewState = call_body(Body, Payload, State, ReplyChannel),
+                     loop(Socket, Body, NewState, WsVersion, ReplyChannel)
+             end;
+-        _ ->
++		{ssl,{sslsocket, _ ,_A}, WsFrames}->
++			case parse_frames(WsVersion, WsFrames, Socket) of
++                close ->
++                    mochiweb_socket:close(Socket),
++                    exit(normal);
++                error ->
++                    mochiweb_socket:close(Socket),
++                    exit(normal);
++                Payload ->
++                    NewState = call_body(Body, Payload, State, ReplyChannel),
++                    loop(Socket, Body, NewState, WsVersion, ReplyChannel)
++            end;
++        _A ->
++			io:format("~p~n",[_A]),
+             mochiweb_socket:close(Socket),
+             exit(normal)
+     end.
+@@ -83,7 +96,7 @@ upgrade_connection(Req, Body) ->
+                 ?MODULE:send(Socket, Payload, Version)
+             end,
+             Reentry = fun (State) ->
+-                ?MODULE:loop(Socket, Body, State, Version, ReplyChannel)
++                ?MODULE:loop( Socket, Body, State, Version, ReplyChannel )
+             end,
+             {Reentry, ReplyChannel};
+         _ ->
+@@ -148,7 +161,7 @@ parse_frames(hybi, Frames, Socket) ->
+     try parse_hybi_frames(Socket, Frames, []) of
+         Parsed -> process_frames(Parsed, [])
+     catch
+-        _:_ -> error
++        _A:_B -> error
+     end;
+ parse_frames(hixie, Frames, _Socket) ->
+     try parse_hixie_frames(Frames, []) of
+@@ -169,6 +182,8 @@ process_frames([{Opcode, Payload} | Rest], Acc) ->
+             process_frames(Rest, [Payload | Acc])
+     end.
+ 
++	
++	
+ parse_hybi_frames(_, <<>>, Acc) ->
+     lists:reverse(Acc);
+ parse_hybi_frames(S, <<_Fin:1,
+@@ -204,20 +219,28 @@ parse_hybi_frames(Socket, <<_Fin:1,
+                            _/binary-unit:8>> = PartFrame,
+                   Acc) ->
+     ok = mochiweb_socket:setopts(Socket, [{packet, 0}, {active, once}]),
++
+     receive
+-        {tcp_closed, _} ->
++        {tcp_closed, _A} ->
++			
+             mochiweb_socket:close(Socket),
+             exit(normal);
+-        {ssl_closed, _} ->
++        {ssl_closed, _A} ->
++			
+             mochiweb_socket:close(Socket),
+             exit(normal);
+-        {tcp_error, _, _} ->
++        {tcp_error, _A, _B} ->
++			
+             mochiweb_socket:close(Socket),
+             exit(normal);
+         {tcp, _, Continuation} ->
+             parse_hybi_frames(Socket, <<PartFrame/binary, Continuation/binary>>,
+                               Acc);
+-        _ ->
++		{ssl,{sslsocket, _ ,_A}, Continuation}->
++			parse_hybi_frames(Socket, <<PartFrame/binary, Continuation/binary>>,
++                              Acc);
++        _A ->
++			
+             mochiweb_socket:close(Socket),
+             exit(normal)
+     after
+@@ -237,8 +260,38 @@ parse_hybi_frames(S, <<_Fin:1,
+                       Rest/binary>>,
+                   Acc) ->
+     Payload2 = hybi_unmask(Payload, MaskKey, <<>>),
+-    parse_hybi_frames(S, Rest, [{Opcode, Payload2} | Acc]).
+-
++    parse_hybi_frames(S, Rest, [{Opcode, Payload2} | Acc]);
++parse_hybi_frames(Socket, <<_Fin:1,_Rsv:3,Opcode:4>> = PartFrame, Acc) ->
++	ok = mochiweb_socket:setopts(Socket, [{packet, 0}, {active, once}]),
++    receive
++        {tcp_closed, _A} ->
++			
++            mochiweb_socket:close(Socket),
++            exit(normal);
++        {ssl_closed, _A} ->
++			
++            mochiweb_socket:close(Socket),
++            exit(normal);
++        {tcp_error, _A, _B} ->
++			
++            mochiweb_socket:close(Socket),
++            exit(normal);
++        {tcp, _, Continuation} ->
++            parse_hybi_frames(Socket, <<PartFrame/binary, Continuation/binary>>,
++                              Acc);
++		{ssl,{sslsocket,_,_A}, Continuation}->
++			parse_hybi_frames(Socket, <<PartFrame/binary, Continuation/binary>>,
++                              Acc);
++        _A ->
++			
++            mochiweb_socket:close(Socket),
++            exit(normal)
++    after
++        5000 ->
++            mochiweb_socket:close(Socket),
++            exit(normal)
++    end.
++	
+ %% Unmasks RFC 6455 message
+ hybi_unmask(<<O:32, Rest/bits>>, MaskKey, Acc) ->
+     <<MaskKey2:32>> = MaskKey,

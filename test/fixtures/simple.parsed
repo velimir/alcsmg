@@ -1,0 +1,42 @@
+[
+ #{'__struct__' => 'Elixir.Alcsmg.GitDiff',
+   from => <<"README.md">>,
+   headers => [#{'__struct__' => 'Elixir.Alcsmg.GitDiff.GitHeader',
+                 from => <<"README.md">>,
+                 line => <<"diff --git a/README.md b/README.md\n">>,
+                 to => <<"README.md">>},
+               #{'__struct__' => 'Elixir.Alcsmg.GitDiff.UnknownHeader',
+                 content => <<"index 55385de..07da384 100644\n">>,
+                 line => <<"index 55385de..07da384 100644\n">>},
+               #{'__struct__' => 'Elixir.Alcsmg.GitDiff.FromHeader',
+                 file => <<"README.md">>,
+                 line => <<"--- a/README.md\n">>},
+               #{'__struct__' => 'Elixir.Alcsmg.GitDiff.ToHeader',
+                 file => <<"README.md">>,
+                 line => <<"+++ b/README.md\n">>}],
+   lines => [#{'__struct__' => 'Elixir.Alcsmg.GitDiff.Code',
+               code => <<"public-repo">>,
+               line => <<" public-repo\n">>,
+               ln => 1,
+               type => same},
+             #{'__struct__' => 'Elixir.Alcsmg.GitDiff.Code',
+               code => <<"===========">>,
+               line => <<" ===========\n">>,
+               ln => 2,
+               type => same},
+             #{'__struct__' => 'Elixir.Alcsmg.GitDiff.Code',
+               code => <<>>,
+               line => <<"+\n">>,
+               ln => 3,
+               type => added},
+             #{'__struct__' => 'Elixir.Alcsmg.GitDiff.Code',
+               code => <<"A better description in the README.">>,
+               line => <<"+A better description in the README.">>,
+               ln => 4,
+               type => added}],
+   to => <<"README.md">>}
+].
+
+% Local Variables:
+% mode: erlang
+% End:

@@ -14,12 +14,12 @@ defimpl Poison.Encoder, for: Any do
     for model <- model_list, do: to_map model
   end
 
-
   defp to_map(model) do
     module = model.__struct__
     mapped = Enum.reduce module.__schema__(:associations), %{}, fn field, acc ->
       case module.__schema__(:association, field) do
-        %Ecto.Reflections.BelongsTo{} -> acc
+        # TODO: fix that!
+        # %Ecto.Reflections.BelongsTo{} -> acc
         _struct ->
           Map.get(model, field)
           |> (&(&1.__assoc__(:loaded))).()

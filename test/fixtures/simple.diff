@@ -1,0 +1,9 @@
+diff --git a/README.md b/README.md
+index 55385de..07da384 100644
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,4 @@
+ public-repo
+ ===========
++
++A better description in the README.

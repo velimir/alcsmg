@@ -1,5 +1,4 @@
 defmodule Alcsmg.InspectionController do
-  alias Poison, as: JSON
   use Phoenix.Controller
   alias Alcsmg.Inspection
 
@@ -8,17 +7,22 @@ defmodule Alcsmg.InspectionController do
   def show(conn, %{"id" => id}) do
     case Inspection.find(id) do
       nil ->
-        resp_msg = JSON.encode! "not found"
-        json conn, :not_found, resp_msg
+        conn
+        |> put_status(:not_found)
+        |> json("not found")
       obj ->
-        json conn, :ok, JSON.encode! obj
+        json conn, obj
     end
   end
 
   def create(conn, %{}) do
-    resp = Inspection.check(conn.params["url"], conn.params["revision"])
-    |> Inspection.to_json
-
-    json conn, :created, resp
+    resp = Inspection.check_and_store(
+      conn.params["url"],
+      conn.params["revision"]
+    )
+    
+    conn
+    |> put_status(:created)
+    |> json(resp)
   end
 end

@@ -1,4 +1,3 @@
 defmodule Alcsmg.LayoutView do
-  use Alcsmg.Views
-
+  use Alcsmg.View
 end
