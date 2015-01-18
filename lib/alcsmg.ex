@@ -11,7 +11,7 @@ defmodule Alcsmg do
       worker(Repo, []),
       supervisor(Alcsmg.Queue.Supervisor, [])
     ]
-    
+
     opts = [strategy: :one_for_one, name: Alcsmg.Supervisor]
     Supervisor.start_link(children, opts)
   end

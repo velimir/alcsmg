@@ -5,7 +5,7 @@ defmodule Alcsmg.Queue.Worker do
   alias Alcsmg.Incident
   alias Alcsmg.Inspection
   alias Alcsmg.GitDiff
-  
+
   use GenServer
   use Exrabbit.Consumer.DSL,
     exchange: exchange_declare(
@@ -43,7 +43,7 @@ defmodule Alcsmg.Queue.Worker do
     %Inspection.CheckResult{
       incidents: all_incidents
     } = Alcsmg.Inspection.check(url, sha)
-    
+
     incidents =
       all_incidents
       |> Enum.group_by(&find_diff(&1, diff))
@@ -57,7 +57,7 @@ defmodule Alcsmg.Queue.Worker do
     |> Enum.flat_map(&to_comments(&1, sha))
     |> Enum.filter(&(not comment_exists?(&1, comments)))
     |> Enum.each(&Github.comment_pull_request(owner, repo, number, sha, &1))
-    
+
     Github.set_status(owner, repo, sha, status_body(inspection, incidents))
 
     {:ack, state}
@@ -100,7 +100,7 @@ defmodule Alcsmg.Queue.Worker do
   defp to_comments({diff, incidents}, commit_id) do
     for incident <- incidents, do: comment_body(diff, incident, commit_id)
   end
-  
+
   defp comment_body(%GitDiff{to: path} = diff, incident, commit_id) do
     %{
        "commit_id" => commit_id,

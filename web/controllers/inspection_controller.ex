@@ -20,7 +20,7 @@ defmodule Alcsmg.InspectionController do
       conn.params["url"],
       conn.params["revision"]
     )
-    
+
     conn
     |> put_status(:created)
     |> json(resp)

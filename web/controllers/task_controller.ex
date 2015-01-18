@@ -2,7 +2,7 @@ defmodule Alcsmg.TaskController do
   defmodule NotFound do
     defexception plug_status: 404, message: "no task found"
   end
-  
+
   use Phoenix.Controller
   alias Alcsmg.InspectionTask
 

@@ -32,7 +32,7 @@ defmodule Alcsmg.Inspection do
   def insert(incidents, url, rev) do
     repo = Repository.find_or_create(url)
     insert_with_incidents(%Alcsmg.Inspection{revision: rev, repository_id: repo.id}, incidents)
-  end 
+  end
 
   def insert_with_incidents(inspection, incidents) do
     {:ok, result} = Repo.transaction fn ->
@@ -44,7 +44,7 @@ defmodule Alcsmg.Inspection do
     end
     result
   end
-  
+
   def find(id) do
     Repo.get(from p in Inspection, where: p.id == ^id,
              preload: [:incidents])

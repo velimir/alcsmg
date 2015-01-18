@@ -38,7 +38,7 @@ config :exrabbit,
   format_options: []
 
 config :phoenix, :serve_endpoints, true
-  
+
 # Import environment specific config. Note, this must remain at the bottom of
 # this file to properly merge your previous config entries.
 import_config "#{Mix.env}.exs"

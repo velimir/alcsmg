@@ -7,7 +7,7 @@ defmodule Alcsmg.Router do
 
   scope path: "/api/alcs/v1", alias: Alcsmg, as: :api_v1 do
     pipe_through :api
-    
+
     resources "/inspections", InspectionController, only: [:show, :create]
     get       "/tasks/:id", TaskController, :show
     post      "/github-webhook", GithubHookController, :create

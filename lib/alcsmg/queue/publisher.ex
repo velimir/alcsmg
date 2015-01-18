@@ -1,6 +1,6 @@
 defmodule Alcsmg.Queue.Publisher do
   require Logger
-  
+
 	use GenServer
   use Exrabbit.Records
   alias Exrabbit.Producer
@@ -20,9 +20,9 @@ defmodule Alcsmg.Queue.Publisher do
 
     producer = %Producer{chan: chan} = Producer.new(
       exchange: exchange, format: nil
-    )    
+    )
     Exrabbit.Channel.set_mode(chan, :confirm)
-    
+
     {:ok, %{producer: producer}}
   end
 

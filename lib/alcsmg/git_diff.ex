@@ -116,7 +116,7 @@ defmodule Alcsmg.GitDiff do
 
   defp is_hunk(%Hunk{}), do: true
   defp is_hunk(_), do: false
-  
+
   defimpl Collectable, for: Hunk do
     def into(original) do
       {original, fn

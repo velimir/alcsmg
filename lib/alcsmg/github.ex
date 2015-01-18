@@ -1,6 +1,6 @@
 defmodule Alcsmg.Github do
   require Logger
-  
+
 	def client do
     conf = Application.get_env(:alcsmg, :github)
     cond do
@@ -36,5 +36,5 @@ defmodule Alcsmg.Github do
     Logger.info "setting status for repos/#{owner}/#{repo}/statuses/#{sha}"
     Logger.debug "body: #{inspect body}"
     {201, _} = Tentacat.Repositories.Statuses.create(owner, repo, sha, body, client)
-  end 
+  end
 end
