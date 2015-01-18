@@ -2,7 +2,7 @@ defmodule Repo.Migrations.CreateInspections do
   use Ecto.Migration
 
   def up do
-    """
+    execute """
       CREATE TABLE inspections(
         id              serial PRIMARY KEY,
         repository_id   integer REFERENCES repositories (id),
@@ -12,6 +12,6 @@ defmodule Repo.Migrations.CreateInspections do
   end
 
   def down do
-    "DROP TABLE inspections CASCADE"
+    execute "DROP TABLE inspections CASCADE"
   end
 end

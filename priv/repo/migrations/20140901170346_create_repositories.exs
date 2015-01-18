@@ -2,7 +2,7 @@ defmodule Repo.Migrations.CreateRepositories do
   use Ecto.Migration
 
   def up do
-    """
+    execute """
       CREATE TABLE repositories(
         id   serial PRIMARY KEY,
         url  text
@@ -11,6 +11,6 @@ defmodule Repo.Migrations.CreateRepositories do
   end
 
   def down do
-    "DROP TABLE repositories CASCADE"
+    execute "DROP TABLE repositories CASCADE"
   end
 end

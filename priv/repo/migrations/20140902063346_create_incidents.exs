@@ -2,7 +2,7 @@ defmodule Repo.Migrations.CreateIncidents do
   use Ecto.Migration
 
   def up do
-    """
+    execute """
       CREATE TABLE incidents(
         id            serial PRIMARY KEY,
         inspection_id integer REFERENCES inspections (id),
@@ -17,6 +17,6 @@ defmodule Repo.Migrations.CreateIncidents do
   end
 
   def down do
-    "DROP TABLE incidents CASCADE"
+    execute "DROP TABLE incidents CASCADE"
   end
 end
