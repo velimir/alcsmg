@@ -30,7 +30,7 @@ defmodule Alcsmg.Mixfile do
       {:postgrex, "~> 0.6"},
       {:ecto,     "~> 0.2"},
       {:inflex,   "~> 0.2.9"},
-      {:tentacat, "~> 0.1"},
+      {:tentacat, github: "velimir0xff/tentacat", branch: "pulls-statuses"},
       {:exrabbit, github: "velimir0xff/exrabbit"},
       {:alcs, git: "git@bitbucket.org:velimir/alcs.git"},
       # test dependencies
