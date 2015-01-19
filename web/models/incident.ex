@@ -19,7 +19,9 @@ defmodule Alcsmg.Incident do
   defp mapping, do: [
     file_name: :path,
     msg_id:    :msg_id,
-    message:   :message,
+    message:   fn
+      msg when is_list(msg) ->      %{message: msg |> to_string}
+    end,
     location:  fn
       {line, column} ->             %{line_no: line, column_no: column}
       line when is_integer(line) -> %{line_no: line, column_no: 0}

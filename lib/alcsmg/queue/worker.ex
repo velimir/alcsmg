@@ -28,6 +28,7 @@ defmodule Alcsmg.Queue.Worker do
   end
 
   # TODO: refactor it
+  # TODO: spawn a process and catch all error
   on %Message{body: body} = msg, state do
     Logger.debug "worker got message to check #{inspect msg}"
     number = body["number"]
@@ -36,10 +37,8 @@ defmodule Alcsmg.Queue.Worker do
     sha    = body["pull_request"]["head"]["sha"]
     url    = body["pull_request"]["head"]["repo"]["ssh_url"]
 
-    # get pull request diff
     diff = Github.get_diff(body["pull_request"]["url"]) |> GitDiff.parse
 
-    # TODO: check if {url, sha} pair hasn't been checked yet
     %Inspection.CheckResult{
       incidents: all_incidents
     } = Alcsmg.Inspection.check(url, sha)
@@ -118,8 +117,8 @@ defmodule Alcsmg.Queue.Worker do
     position + 1
   end
 
-  defp comment_msg(%Incident{msg_id: msg_id, error_type: type}) do
-    "[#{type}]: see code style: #{msg_id}"
+  defp comment_msg(%Incident{msg_id: msg_id, error_type: type, message: msg}) do
+    "#{type} detected: #{msg} (see code style: #{msg_id})"
   end
 
   defp comment_exists?(%{"body" => body, "position" => position}, comments) do

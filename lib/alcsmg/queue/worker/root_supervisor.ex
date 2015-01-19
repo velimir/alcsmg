@@ -9,7 +9,6 @@ defmodule Alcsmg.Queue.Worker.RootSupervisor do
   def init(_args) do
     children = [
       supervisor(Alcsmg.Queue.Worker.Supervisor, []),
-      # TODO: pass number for init workers
       worker(Alcsmg.Queue.Worker.Manager, [%{init_number: get_workers_number}])
     ]
 
