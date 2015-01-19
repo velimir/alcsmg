@@ -4,6 +4,9 @@ defmodule Alcsmg.Repository do
 
   schema "repositories" do
     field :url, :string
+    
+    timestamps
+    
     has_many :inspections, Alcsmg.Inspection
   end
 

@@ -10,6 +10,8 @@ defmodule Alcsmg.Inspection do
   schema "inspections" do
     field :revision, :string
 
+    timestamps
+
     belongs_to :repository, Alcsmg.Repository
     has_many :incidents, Alcsmg.Incident
   end

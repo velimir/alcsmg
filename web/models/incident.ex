@@ -8,10 +8,9 @@ defmodule Alcsmg.Incident do
     field :path,          :string
     field :line_no,       :integer
     field :column_no,     :integer, default: 0
-    # TODO: add message
-    # field :message,       :string
+    field :message,       :string
     field :msg_id,        :integer
-
+    
     belongs_to :inspection, Alcsmg.Inspection
   end
 
@@ -20,6 +19,7 @@ defmodule Alcsmg.Incident do
   defp mapping, do: [
     file_name: :path,
     msg_id:    :msg_id,
+    message:   :message,
     location:  fn
       {line, column} ->             %{line_no: line, column_no: column}
       line when is_integer(line) -> %{line_no: line, column_no: 0}
