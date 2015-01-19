@@ -2,16 +2,13 @@ defmodule Repo.Migrations.CreateInspections do
   use Ecto.Migration
 
   def up do
-    execute """
-      CREATE TABLE inspections(
-        id              serial PRIMARY KEY,
-        repository_id   integer REFERENCES repositories (id),
-        revision        text
-      )
-    """
+    create table(:inspections) do
+      add :repository_id, references(:repositories)
+      add :revision,      :text
+
+      timestamps
+    end
   end
 
-  def down do
-    execute "DROP TABLE inspections CASCADE"
-  end
+  def down, do: drop table(:inspections)
 end
