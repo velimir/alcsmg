@@ -25,11 +25,10 @@ defmodule Alcsmg.Mixfile do
   # { :barbat, "~> 0.1", github: "elixir-lang/barbat" }
   defp deps do
     [
-      {:phoenix,  "~> 0.7"},
+      {:phoenix,  "~> 0.8"},
       {:cowboy,   "~> 1.0.0"},
       {:postgrex, "~> 0.6"},
       {:ecto,     "~> 0.2"},
-      {:inflex,   "~> 0.2.9"},
       {:tentacat, github: "velimir0xff/tentacat", branch: "pulls-statuses"},
       {:exrabbit, github: "velimir0xff/exrabbit"},
       {:alcs, git: "git@bitbucket.org:velimir/alcs.git"},
