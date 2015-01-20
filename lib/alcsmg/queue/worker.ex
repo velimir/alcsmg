@@ -36,7 +36,8 @@ defmodule Alcsmg.Queue.Worker do
       process_pull_request(body)
     catch
       _, reason ->
-        Logger.error "check failed with error: #{inspect reason}"
+        stack = System.stacktrace
+        Logger.error "check failed with error: #{inspect reason}: #{inspect stack}"
         on_failed_check(body)
     end
 
