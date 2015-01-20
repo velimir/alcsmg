@@ -17,7 +17,6 @@ defmodule Alcsmg.Checker do
 
   def check_file(file) do
     # TODO: read settings from repository .alcs file
-    # TODO: filter :ok statuses on alcs side
     Logger.debug "running check on file: #{file}"
     :alcs.run(to_char_list(file), rules: :all)
     |> Enum.filter(&(&1 != :ok))

@@ -6,6 +6,8 @@ defmodule Alcsmg.Queue.Worker do
   alias Alcsmg.Inspection
   alias Alcsmg.GitDiff
 
+  @status_context "code-style/alcsmg"
+
   use GenServer
   use Exrabbit.Consumer.DSL,
     exchange: exchange_declare(
@@ -27,43 +29,74 @@ defmodule Alcsmg.Queue.Worker do
     {:ok, []}
   end
 
-  # TODO: refactor it
-  # TODO: spawn a process and catch all error
   on %Message{body: body} = msg, state do
     Logger.debug "worker got message to check #{inspect msg}"
+
+    try do
+      process_pull_request(body)
+    catch
+      _, reason ->
+        Logger.error "check failed with error: #{inspect reason}"
+        on_failed_check(body)
+    end
+
+    {:ack, state}
+  end
+
+  def process_pull_request(body) do
     number = body["number"]
     repo   = body["repository"]["name"]
     owner  = body["repository"]["owner"]["login"]
     sha    = body["pull_request"]["head"]["sha"]
     url    = body["pull_request"]["head"]["repo"]["ssh_url"]
 
-    diff = Github.get_diff(body["pull_request"]["url"]) |> GitDiff.parse
+    incidents =
+      body["pull_request"]["url"]
+      |> get_diff
+      |> check_diff(url, sha)
 
+    comment(incidents, owner, repo, number, sha)
+
+    inspection = store(incidents, url, sha)
+    Github.set_status(owner, repo, sha, status_body(inspection, incidents))
+  end
+
+  defp on_failed_check(body) do
+    repo   = body["repository"]["name"]
+    owner  = body["repository"]["owner"]["login"]
+    sha    = body["pull_request"]["head"]["sha"]
+
+    Github.set_status(owner, repo, sha, status_body(nil, nil))
+  end
+
+  defp get_diff(url) do
+    url
+    |> Github.get_diff
+    |> GitDiff.parse
+  end
+
+  defp check_diff(diff, url, sha) do
     %Inspection.CheckResult{
       incidents: all_incidents
     } = Alcsmg.Inspection.check(url, sha)
 
-    incidents =
-      all_incidents
-      |> Enum.group_by(&find_diff(&1, diff))
-      |> Enum.filter(&(not match?({nil, _}, &1)))
+    all_incidents
+    |> Enum.group_by(&find_diff(&1, diff))
+    |> Enum.filter(&(not match?({nil, _}, &1)))
+  end
 
-    inspection = store(incidents, url, sha)
-
+  defp comment(incidents, owner, repo, number, sha) do
     comments = Github.list_comments(owner, repo, number)
 
     incidents
     |> Enum.flat_map(&to_comments(&1, sha))
     |> Enum.filter(&(not comment_exists?(&1, comments)))
     |> Enum.each(&Github.comment_pull_request(owner, repo, number, sha, &1))
-
-    Github.set_status(owner, repo, sha, status_body(inspection, incidents))
-
-    {:ack, state}
   end
 
   defp store(incidents, url, rev) do
-    Enum.reduce(incidents, [], fn {_, inc}, acc -> inc ++ acc end)
+    incidents
+    |> Enum.reduce([], fn {_, inc}, acc -> inc ++ acc end)
     |> Inspection.insert(url, rev)
   end
 
@@ -79,17 +112,32 @@ defmodule Alcsmg.Queue.Worker do
     end
   end
 
-  defp status_body(inspection, incidents) do
+  defp status_body(nil, nil) do
     %{
-       "state" => get_check_status(incidents),
+       "state" => "failure",
+       "description" => status_description("failure"),
+       "context" => @status_context
+     }
+  end
+  defp status_body(inspection, incidents) do
+    state = get_check_state(incidents)
+    url = Alcsmg.Router.Helpers.api_v1_inspection_url(
+      Alcsmg.Endpoint, :show, inspection.id)
+
+    %{
+       "state" => state,
        # TODO: get host name and check id, that's been saved
-       "target_url" => Alcsmg.Router.Helpers.api_v1_inspection_url(Alcsmg.Endpoint, :show, inspection.id),
-       "description" => "AL Erlang code style check",
-       "context" => "code-style/alcsmg"
+       "target_url" => url,
+       "description" => status_description(state),
+       "context" => @status_context
      }
   end
 
-  defp get_check_status(incidnets) do
+  defp status_description("failure"), do: "AL Erlang code style check failed to complete job"
+  defp status_description("success"), do: "AL Erlang code style check completed with no errors"
+  defp status_description("error"), do: "AL Erlang code style check completed with errors"
+
+  defp get_check_state(incidnets) do
     cond do
       Enum.any? incidnets, &match?({diff, _} when diff != nil, &1) -> "error"
       true -> "success"
