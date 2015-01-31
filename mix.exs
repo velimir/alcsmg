@@ -31,9 +31,7 @@ defmodule Alcsmg.Mixfile do
       {:ecto,     "~> 0.2"},
       {:tentacat, github: "velimir0xff/tentacat", branch: "pulls-statuses"},
       {:exrabbit, github: "velimir0xff/exrabbit"},
-      {:alcs, git: "git@bitbucket.org:velimir/alcs.git"},
-      # test dependencies
-      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.1", only: :test}
+      {:alcs, git: "git@bitbucket.org:velimir/alcs.git"}
     ]
   end
 end

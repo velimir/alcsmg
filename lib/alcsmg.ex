@@ -7,9 +7,9 @@ defmodule Alcsmg do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(Alcsmg.Endpoint, []),
+      supervisor(Alcsmg.Queue.Supervisor, []),
       worker(Repo, []),
-      supervisor(Alcsmg.Queue.Supervisor, [])
+      worker(Alcsmg.Endpoint, [])
     ]
 
     opts = [strategy: :one_for_one, name: Alcsmg.Supervisor]

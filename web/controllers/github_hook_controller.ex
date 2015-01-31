@@ -15,7 +15,8 @@ defmodule Alcsmg.GithubHookController do
     on_event(conn, hook_data, event)
   end
 
-  defp on_event(conn, _data, event) when event in @events do
+  defp on_event(conn, %{"action" => action}, event)
+      when event in @events and action != "closed" do
     Alcsmg.Queue.publish_pr(conn.private[:body])
     conn |> put_status(:created) |> json(:created)
   end
@@ -27,6 +28,6 @@ defmodule Alcsmg.GithubHookController do
     Logger.info "received unsupported event: #{inspect event}"
     conn
     |> put_status(:bad_request)
-    |> json(%{:error => "event '#{inspect event}' is not supported"})
+    |> json(%{:error => "event '#{event}' is not supported"})
   end
 end

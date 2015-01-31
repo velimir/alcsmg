@@ -5,7 +5,7 @@ defmodule GitDiffTest do
   setup context do
     "test " <> name = context.test |> to_string
     diff = TestHelpers.fixture_path(name <> ".diff") |> File.read!
-    {:ok, [parsed]} = :file.consult(TestHelpers.fixture_path(name <> ".parsed"))
+    {:ok, [parsed]} = :file.consult(TestHelpers.fixture_path(name <> ".eterm"))
     
     {:ok,
      context

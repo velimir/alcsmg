@@ -15,6 +15,10 @@ defmodule Alcsmg.Queue.Worker.Manager do
 	  Enum.each :lists.seq(1, num), fn _ -> Worker.Supervisor.start_child([]) end
   end
 
+  def count_worker() do
+    Supervisor.count_children(Worker.Supervisor)
+  end
+
   # private
 
   def handle_info(:timeout, %{init_number: number} = state) do

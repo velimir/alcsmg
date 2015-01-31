@@ -9,7 +9,6 @@ defmodule Alcsmg.Router do
     pipe_through :api
 
     resources "/inspections", InspectionController, only: [:show, :create]
-    get       "/tasks/:id", TaskController, :show
     post      "/github-webhook", GithubHookController, :create
   end
 end
