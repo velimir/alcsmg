@@ -29,7 +29,7 @@ defmodule Alcsmg.Mixfile do
       {:cowboy,   "~> 1.0.0"},
       {:postgrex, "~> 0.6"},
       {:ecto,     "~> 0.2"},
-      {:tentacat, github: "velimir0xff/tentacat", branch: "pulls-statuses"},
+      {:tentacat, github: "velimir0xff/tentacat", branch: "new-features"},
       {:exrabbit, github: "velimir0xff/exrabbit"},
       {:alcs, git: "git@bitbucket.org:velimir/alcs.git"}
     ]

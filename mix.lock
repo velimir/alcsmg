@@ -18,4 +18,4 @@
   "postgrex": {:hex, :postgrex, "0.7.0"},
   "rabbit_common": {:git, "git://github.com/jbrisbin/rabbit_common.git", "78a5e0812b501f900afd0309dc890c75a9dfce37", [tag: "rabbitmq-3.4.0"]},
   "ranch": {:hex, :ranch, "1.0.0"},
-  "tentacat": {:git, "git://github.com/velimir0xff/tentacat.git", "319eb0e0d67c4d8132a9321cf5f7b930c98ae2c5", [branch: "pulls-statuses"]}}
+  "tentacat": {:git, "git://github.com/velimir0xff/tentacat.git", "386e06968822a9320868b3a7c025fc13c2ca9325", [branch: "new-features"]}}
